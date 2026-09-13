@@ -1,12 +1,4 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { Header, Footer } from '@/components/site';
-
-export const metadata: Metadata = {
-  title: 'ANITS Faculty Portal',
-  description: 'Faculty research, publications and achievements portal for ANITS.',
-};
-
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><Header />{children}<Footer /></body></html>;
-}
+import { getFacultyById, getFacultyChildren } from '@/lib/data';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+export default async function FacultyProfile({params}:{params:Promise<{id:string}>}){const {id}=await params; const f=await getFacultyById(decodeURIComponent(id)); if(!f) notFound(); const c=await getFacultyChildren(f.id); return <main className="container profile"><Link href="/faculty" className="text-link">← Back to faculty</Link><section className="profile-card" style={{marginTop:20}}><img className="profile-photo" src={f.photo||'/placeholder.svg'} alt={f.name}/><div><h1>{f.name}</h1><div className="profile-meta"><b>{(f.designation||'Faculty').split('|')[0].trim()}</b><br/>{f.department}{f.qualification&&<> · {f.qualification}</>}{f.email&&<><br/>{f.email}</>}{f.phone&&<><br/>{f.phone}</>}</div>{f.research_interests&&<div className="chips">{f.research_interests.split(/[,;]+/).map(x=><span className="chip" key={x}>{x.trim()}</span>)}</div>}<div className="hero-actions"><a className="button primary" href={f.profile_url||'#'} target="_blank" rel="noreferrer">Official Profile</a>{f.irins_url&&<a className="button secondary" style={{color:'var(--brand)',borderColor:'var(--line)'}} href={f.irins_url} target="_blank" rel="noreferrer">IRINS</a>}</div></div></section><div className="detail-grid"><section className="detail-card"><h2>Publications <span className="muted">({c.publications.length})</span></h2>{c.publications.length?<ul>{c.publications.slice(0,30).map((p:any)=><li key={p.id}>{p.url?<a className="text-link" href={p.url} target="_blank" rel="noreferrer">{p.title||'Untitled publication'}</a>:p.title||'Untitled publication'}<br/><span className="muted">{p.venue||''}{p.year?` · ${p.year}`:''}</span></li>)}</ul>:<p className="muted">No publications listed.</p>}</section><section className="detail-card"><h2>Achievements <span className="muted">({c.achievements.length})</span></h2>{c.achievements.length?<ul>{c.achievements.slice(0,30).map((a:any)=><li key={a.id}>{a.url?<a className="text-link" href={a.url} target="_blank" rel="noreferrer">{a.title||'Achievement'}</a>:a.title||'Achievement'}{a.description&&<><br/><span className="muted">{a.description}</span></>}{a.year&&<span className="muted"> · {a.year}</span>}</li>)}</ul>:<p className="muted">No achievements listed.</p>}</section><section className="detail-card"><h2>Memberships</h2>{c.memberships.length?<div className="chips">{c.memberships.map((m:any)=><span className="chip" key={m.id}>{m.membership}</span>)}</div>:<p className="muted">No memberships listed.</p>}</section><section className="detail-card"><h2>Faculty Links</h2>{c.links.length?<ul>{c.links.map((l:any)=><li key={l.id}><a className="text-link" href={l.url} target="_blank" rel="noreferrer">{l.label||l.url}</a></li>)}</ul>:<p className="muted">No additional links listed.</p>}</section></div></main>}
