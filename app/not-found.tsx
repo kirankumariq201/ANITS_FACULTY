@@ -1,5 +1,18 @@
 import Link from 'next/link';
-import { GraduationCap } from 'lucide-react';
 
-export function Header() { return <header className="site-header"><div className="container nav"><Link href="/" className="brand"><span className="brand-mark"><GraduationCap size={22}/></span><span><strong>ANITS</strong><small>Faculty Portal</small></span></Link><nav><Link href="/">Home</Link><Link href="/faculty">Faculty</Link></nav></div></header>; }
-export function Footer() { return <footer><div className="container footer-inner"><div><strong>ANITS Faculty Portal</strong><p>Faculty research and achievements directory.</p></div><p>© {new Date().getFullYear()} ANITS</p></div></footer>; }
+export default function NotFound() {
+  return (
+    <main className="container">
+      <section className="page-head">
+        <span className="eyebrow">404</span>
+        <h1>Page not found</h1>
+        <p className="muted">
+          The page you requested could not be found.
+        </p>
+        <Link href="/" className="button primary">
+          Back to Home
+        </Link>
+      </section>
+    </main>
+  );
+}
