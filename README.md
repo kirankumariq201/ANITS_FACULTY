@@ -1,2 +1,2 @@
 # ANITS_FACULTY
-live site :anits-faculty.vercel.app
+live site : anits-faculty.vercel.app
